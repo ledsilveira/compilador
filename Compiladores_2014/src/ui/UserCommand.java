@@ -1,0 +1,16 @@
+package ui;
+
+public enum UserCommand {
+
+	LOAD_FILE,
+	SAVE_FILE,
+	EXIT,
+	
+	LEXICON_ANALYZER,
+	SINTACTIC_ANALYZER,
+	SEMANTIC_ANALYZER,
+	
+	ABOUT,
+	HELP
+	
+}
