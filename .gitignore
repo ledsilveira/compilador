@@ -1,1 +1,5 @@
-/Compiladores_2014/dist/
+Compiladores_2014/dist/
+
+Compiladores_2014/build/**/*
+
+*.class

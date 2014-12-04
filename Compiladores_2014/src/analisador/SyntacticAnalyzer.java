@@ -3,7 +3,6 @@ package analisador;
 import java.util.ArrayList;
 import java.util.List;
 import gals.LexicalError;
-import gals.Lexico;
 import gals.SemanticError;
 import gals.Sintatico;
 import gals.Semantico;
@@ -18,14 +17,16 @@ public class SyntacticAnalyzer extends Analyzer {
         {
             List<Message> messages = new ArrayList<Message>();
             
+           
             Sintatico sintatico = new Sintatico();
             Semantico semantico = new Semantico();
+            
             
             this.lexico.setInput( code );
             
             try
             {
-                sintatico.parse(this.lexico , null);
+                sintatico.parse(this.lexico, null );
                 Message msg = new Message("Analisador sintático executado", "não encontrou erros sintáticos no programa ","", 1, 0 );
                 
                 messages.add(msg);
@@ -50,11 +51,8 @@ public class SyntacticAnalyzer extends Analyzer {
             }
             catch( SemanticError eee )
             {
-               // Message msg = new Message("Erro Semântico", "Encontrado erro na posição: " + eee.getPosition(), eee.getMessage(), 2, eee.getPosition());
                 
-               // messages.add(msg);
-                
-               // System.out.println("Erro. " + eee.getMessage() + " " + eee.getPosition());
+              
             }
             
             return messages;

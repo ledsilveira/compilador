@@ -70,7 +70,10 @@ public class Sintatico implements Constants
         }
         else // isSemanticAction(x)
         {
-            semanticAnalyser.executeAction(x-FIRST_SEMANTIC_ACTION, previousToken);
+            if( semanticAnalyser != null )
+            {
+                semanticAnalyser.executeAction(x-FIRST_SEMANTIC_ACTION, previousToken);
+            }
             return false;
         }
     }
