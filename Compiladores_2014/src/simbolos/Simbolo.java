@@ -13,14 +13,48 @@ package simbolos;
 public class Simbolo {
     protected String nome;
     protected String categoria;
-    protected int nivelDeclarado;
-    private int deslocamento;
+    protected int nivelAtual;
+    protected int deslocamento;
+    protected String tipo;
+    protected String valor;
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public int getNivelAtual() {
+        return nivelAtual;
+    }
+
+    public void setNivelAtual(int nivelAtual) {
+        this.nivelAtual = nivelAtual;
+    }
+
+    public int getDeslocamento() {
+        return deslocamento;
+    }
+
+    public void setDeslocamento(int deslocamento) {
+        this.deslocamento = deslocamento;
+    }
 
     public Simbolo( String nome, String categoria )
     {
         this.nome = nome;
         this.categoria = categoria;
-        this.nivelDeclarado = 0;
+        this.nivelAtual = 0;
     }
     public void debugSimbolo()
     {

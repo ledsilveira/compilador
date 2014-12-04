@@ -6,7 +6,9 @@
 
 package simbolos;
 
+import gals.Token;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -24,5 +26,28 @@ public class TabelaDeSimbolos {
     {
         this.nivelAtual = a;
     }
-    
+
+    public boolean verificaIdDeclarado(Token token) {
+        //verificar se este símbolo já foi declarado no nível atual
+        
+        String elemento = token.getLexeme();
+        Iterator<Simbolo> it = this.tabelaSimbolos.iterator();
+        while( it.hasNext() )
+        {
+            Simbolo next = it.next(); 
+            if( next.getNome().equalsIgnoreCase( elemento ) && next.getNivelAtual()== this.nivelAtual )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public int  getQuantiTotalElements()
+    {
+        return this.tabelaSimbolos.size();
+    }
+
+    public Simbolo pegaSimboloDaTSpelaPosicao(int posSimboloAtual) {
+        return this.tabelaSimbolos.get(posSimboloAtual); //To change body of generated methods, choose Tools | Templates.
+    }
 }
