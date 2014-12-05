@@ -18,6 +18,7 @@ public class TabelaDeSimbolos {
     ArrayList<Simbolo> tabelaSimbolos = new ArrayList<Simbolo>();
     private int nivelAtual = 0;
     
+    
     public void adicionaSimbolo( Simbolo simbolo )
     {
         this.tabelaSimbolos.add(simbolo);
@@ -49,5 +50,20 @@ public class TabelaDeSimbolos {
 
     public Simbolo pegaSimboloDaTSpelaPosicao(int posSimboloAtual) {
         return this.tabelaSimbolos.get(posSimboloAtual); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public Simbolo retornaSimboloPeloID(String elemento) {
+        //verificar se este símbolo já foi declarado no nível atual
+        
+        Iterator<Simbolo> it = this.tabelaSimbolos.iterator();
+        while( it.hasNext() )
+        {
+            Simbolo next = it.next(); 
+            if( next.getNome().equalsIgnoreCase( elemento ) && next.getNivelAtual()== this.nivelAtual )
+            {
+                return next;
+            }
+        }
+        return null;
     }
 }

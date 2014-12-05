@@ -18,6 +18,11 @@ public class Simbolo {
     protected String tipo;
     protected String valor;
 
+    public Simbolo(String nome) {
+        this.nome = nome;
+        this.nivelAtual = 0;
+    }
+
     public String getNome() {
         return nome;
     }
