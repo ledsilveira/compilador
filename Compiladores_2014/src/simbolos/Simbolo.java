@@ -18,6 +18,22 @@ public class Simbolo {
     protected String tipo;
     protected String valor;
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getValor() {
+        return valor;
+    }
+
+    public void setValor(String valor) {
+        this.valor = valor;
+    }
+
     public Simbolo(String nome) {
         this.nome = nome;
         this.nivelAtual = 0;
@@ -63,6 +79,6 @@ public class Simbolo {
     }
     public void debugSimbolo()
     {
-        System.out.println( this.nome +"    -   "+this.categoria );
+        System.out.println( this.nome +"    -   "+this.categoria+"    -    "+this.tipo+"    -    "+this.valor  );
     }
 }

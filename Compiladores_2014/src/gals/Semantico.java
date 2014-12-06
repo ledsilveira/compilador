@@ -20,10 +20,13 @@ public class Semantico implements Constants
     ArrayList <Integer>ListaAux;
     protected int NPF;
     String TipoAtual;
-    private Object TipoConst;
+    private String TipoConst;
+    private String ValCte;
     
     public  Semantico()
     {
+        this.ValCte = "";
+        this.TipoConst = "";
         this.TipoAtual = "";
         this.POSID = -1;
         this.CategoriaAtual = "";
@@ -310,7 +313,10 @@ public class Semantico implements Constants
 
     private void metodo103(Token token) throws SemanticError {
         
-        //throw new SemanticError("Not supported yet." , 1); //To change body of generated methods, choose Tools | Templates.
+        Simbolo constAtualiza = this.ts.pegaSimboloDaTSpelaPosicao(this.POSID);
+        constAtualiza.setTipo(this.TipoConst);
+        constAtualiza.setValor(this.ValCte);
+        this.ts.atualizaElementoNaTS(this.POSID, constAtualiza);
     }
     private void metodo104(Token token) throws SemanticError {
         this.contextoLID = "decl";
@@ -470,7 +476,8 @@ public class Semantico implements Constants
         }
         else
         {
-            
+            this.TipoConst = s.getTipo();
+            this.ValCte = s.getValor();
         }
     }
 
@@ -659,22 +666,27 @@ public class Semantico implements Constants
     }
 
     private void metodo175(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+          this.TipoConst = "inteiro";
+          this.ValCte = token.getLexeme();
     }
 
     private void metodo176(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+          this.TipoConst = "real";
+          this.ValCte = token.getLexeme();
     }
 
     private void metodo177(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+          this.TipoConst = "booleano";
+          this.ValCte = token.getLexeme();
     }
 
     private void metodo178(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+          this.TipoConst = "booleano";
+          this.ValCte = token.getLexeme();
     }
 
     private void metodo179(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+          this.TipoConst = "literal";
+          this.ValCte = token.getLexeme();
     }
 }

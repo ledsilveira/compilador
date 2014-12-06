@@ -18,10 +18,23 @@ public class TabelaDeSimbolos {
     ArrayList<Simbolo> tabelaSimbolos = new ArrayList<Simbolo>();
     private int nivelAtual = 0;
     
-    
+    public void debugTabela()
+    {
+        System.out.println( "\u001B[31m----------- TABELA DE SÍMBOLOS -----------" );
+        System.out.println( "\u001B[31m - NOME -    - CATEGORIA -     - Tipo da Constante -      - Valor" );
+        Iterator<Simbolo> it = this.tabelaSimbolos.iterator();
+        while( it.hasNext() )
+        {
+            Simbolo nex = (Simbolo) it.next();
+            nex.debugSimbolo();
+        }
+        System.out.println( "\u001B[31m----------- FIM DA TABELA DE SÍMBOLOS -----------" );
+        
+    }
     public void adicionaSimbolo( Simbolo simbolo )
     {
         this.tabelaSimbolos.add(simbolo);
+        this.debugTabela();
     }
     public void setaNivelAtual(int a)
     {
@@ -65,5 +78,10 @@ public class TabelaDeSimbolos {
             }
         }
         return null;
+    }
+    public void atualizaElementoNaTS( int pos, Simbolo s)
+    {
+        this.tabelaSimbolos.set(pos, s);
+        this.debugTabela();
     }
 }
