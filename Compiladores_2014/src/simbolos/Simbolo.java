@@ -37,6 +37,10 @@ public class Simbolo {
     public Simbolo(String nome) {
         this.nome = nome;
         this.nivelAtual = 0;
+        this.categoria = "";
+        this.deslocamento = 0;
+        this.valor = "";
+        this.tipo = "";
     }
 
     public String getNome() {
@@ -76,6 +80,9 @@ public class Simbolo {
         this.nome = nome;
         this.categoria = categoria;
         this.nivelAtual = 0;
+        this.deslocamento = 0;
+        this.valor = "";
+        this.tipo = "";
     }
     public void debugSimbolo()
     {

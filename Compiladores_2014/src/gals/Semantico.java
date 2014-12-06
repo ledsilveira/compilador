@@ -2,6 +2,7 @@ package gals;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
 import simbolos.Simbolo;
 import simbolos.TabelaDeSimbolos;
 
@@ -22,9 +23,14 @@ public class Semantico implements Constants
     String TipoAtual;
     private String TipoConst;
     private String ValCte;
+    private String TipoLimiteInferior;
+    private String ValorLimiteInferior;
+    private String TipoElementos;
     
     public  Semantico()
     {
+        this.ValorLimiteInferior = "";
+        this.TipoLimiteInferior = "";
         this.ValCte = "";
         this.TipoConst = "";
         this.TipoAtual = "";
@@ -330,8 +336,24 @@ public class Semantico implements Constants
         }
     }
     private void metodo105(Token token) throws SemanticError {
+        /**@todo método incompleto**/
+        //Lista de registro
+        Iterator<Integer> itReg;
+        itReg = this.ListaReg.iterator();
+        while( itReg.hasNext() )
+        {
+            Integer nex = itReg.next();
+            
+        }
         
-       // throw new SemanticError("Not supported yet." , 1); //To change body of generated methods, choose Tools | Templates.
+        Iterator<Integer> itVar;
+        itVar = this.ListaReg.iterator();
+        while( itVar.hasNext() )
+        {
+            Integer nex = itVar.next();
+            
+        }
+        //Lista de variavel
     }
     private void metodo106(Token token) throws SemanticError {
         
@@ -440,24 +462,46 @@ public class Semantico implements Constants
         }
     }
 
-    private void metodo122(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo122(Token token) throws SemanticError {
+        if( this.TipoConst.equals("inteiro") || this.TipoConst.equals("caracter"))
+        {
+            this.TipoLimiteInferior = this.TipoConst;
+            this.ValorLimiteInferior = token.getLexeme();
+        }
+        else
+        {
+            throw new SemanticError("Tipo de constante inválido", token.getPosition() );
+        }
     }
 
-    private void metodo123(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo123(Token token) throws SemanticError {
+        if( !this.TipoConst.equals( this.TipoLimiteInferior) )
+        {
+            throw new SemanticError("Constantes de intervalo diferentes", token.getPosition() );
+        }
+        else
+        {
+            int comp = token.getLexeme().compareTo(this.ValorLimiteInferior);  
+  
+            if(comp <= 0)
+            {  
+              throw new SemanticError("Lim. Sup. <= Limite Inf.", token.getPosition() );  
+            } 
+        }
     }
 
     private void metodo124(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.TipoElementos = this.TipoAtual;
+        this.TipoAtual = "vetor";
     }
 
     private void metodo125(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.eh_registro = true;
     }
 
     private void metodo126(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.eh_registro = false;
+        this.TipoAtual = "registro";
     }
 
     private void metodo127(Token token) throws SemanticError {
@@ -481,8 +525,23 @@ public class Semantico implements Constants
         }
     }
 
-    private void metodo128(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo128(Token token) throws SemanticError {
+        if( !this.ts.verificaIdDeclarado(token) )
+        {
+            throw new SemanticError("Identificador não declarado", token.getPosition() );
+        }
+        else
+        {
+            int posID = this.ts.retornaPosicaoSimboloPeloID(token.getLexeme());
+            if ( posID < 0 )
+            {
+                throw new SemanticError("Erro não esperado, posição de ID não encontrada", token.getPosition() );
+            }
+            else
+            {
+                this.POSID = posID;
+            }
+        }
     }
 
     private void metodo130(Token token) {
@@ -686,6 +745,10 @@ public class Semantico implements Constants
     }
 
     private void metodo179(Token token) {
+        /**
+         * @todo gambiarra para caracter? 'a'
+         * 
+         */
           this.TipoConst = "literal";
           this.ValCte = token.getLexeme();
     }

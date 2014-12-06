@@ -84,4 +84,21 @@ public class TabelaDeSimbolos {
         this.tabelaSimbolos.set(pos, s);
         this.debugTabela();
     }
+    
+    public int retornaPosicaoSimboloPeloID(String elemento) {
+        //verificar se este símbolo já foi declarado no nível atual
+        
+        Iterator<Simbolo> it = this.tabelaSimbolos.iterator();
+        int aux = 0;
+        while( it.hasNext() )
+        {
+            Simbolo next = it.next(); 
+            if( next.getNome().equalsIgnoreCase( elemento ) && next.getNivelAtual()== this.nivelAtual )
+            {
+                return aux;
+            }
+            aux++;
+        }
+        return -1;
+    }
 }
