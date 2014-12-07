@@ -30,9 +30,23 @@ public class Semantico implements Constants
     private int METODOID;
     private String MPP;
     private String TipoDoMetodo;
+    private String TipoExpr;
+    private String contextoEXPR;
+    private String TipoFator;
+    private String TipoVar;
+    private String TipoTermo;
+    private String TipoExpSimples;
     
     public  Semantico()
     {
+        this.TipoExpSimples = "";
+        this.TipoTermo = "";
+        this.TipoVar = "";
+        this.TipoFator = "";
+        this.contextoEXPR ="";
+        this.TipoExpr = "";
+        this.TipoDoMetodo = "";
+        this.TipoElementos = "";
         this.deslocamentoVar = -1;
         this.ValorLimiteInferior = "";
         this.TipoLimiteInferior = "";
@@ -139,7 +153,7 @@ public class Semantico implements Constants
                 this.metodo128( token );
                 break;
             case 129:
-                this.metodo109( token );
+                this.metodo129( token );
                 break;
             case 130:
                 this.metodo130( token );
@@ -400,6 +414,7 @@ public class Semantico implements Constants
         this.ts.retiraVariaveisLocais();
         int nva = this.ts.getNivelAtual() - 1;
         this.ts.setaNivelAtual(nva);
+        this.TipoDoMetodo = "";
        // throw new SemanticError("Not supported yet." , 1); //To change body of generated methods, choose Tools | Templates.
     }
     private void metodo110(Token token) throws SemanticError {
@@ -594,17 +609,51 @@ public class Semantico implements Constants
             }
         }
     }
+    
+    private void metodo129(Token token) throws SemanticError
+    {
+        if( !this.TipoExpr.equals("booleano") && !this.TipoExpr.equals("inteiro") )
+        {
+            throw new SemanticError("Tipo inválido da expressão", token.getPosition() );
+        }
+        /**
+         * @todo: GERA Código
+         */
+    }
 
     private void metodo130(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.Le_VAR = true;
     }
 
-    private void metodo131(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo131(Token token) throws SemanticError {
+        this.contextoEXPR = "impressao";
+        if( !this.TipoExpr.equals("inteiro") && !this.TipoExpr.equals("real") && !this.TipoExpr.equals("caracter") && !this.TipoExpr.equals("cadeia") )
+        {
+            throw new SemanticError("Tipo inválido para impressão", token.getPosition() );
+        }
+        else
+        {
+            /**
+             * @todo: gera código
+             */
+        }
+        
     }
 
-    private void metodo132(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo132(Token token) throws SemanticError {
+        if( this.TipoDoMetodo.equals("") || this.TipoDoMetodo.equals("nulo") )
+        {
+            throw new SemanticError("'Retorne' só pode ser usado em método com tipo", token.getPosition() );
+        }
+        if(!this.TipoExpr.equals(this.TipoDoMetodo))
+        {
+            System.out.println("tipoExpr "+this.TipoExpr);
+            System.out.println("tipoMetodo "+this.TipoDoMetodo);
+            throw new SemanticError("Tipo da expressão diferente do tipo do método", token.getPosition() );
+        }
+        /**
+         * @todo: Geração de código
+         */
     }
 
     private void metodo133(Token token) {
@@ -652,7 +701,7 @@ public class Semantico implements Constants
     }
 
     private void metodo144(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.TipoExpr = this.TipoExpSimples;
     }
 
     private void metodo145(Token token) {
@@ -684,7 +733,7 @@ public class Semantico implements Constants
     }
 
     private void metodo152(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.TipoExpSimples = this.TipoTermo;
     }
 
     private void metodo153(Token token) {
@@ -708,7 +757,7 @@ public class Semantico implements Constants
     }
 
     private void metodo158(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.TipoTermo = this.TipoFator;
     }
 
     private void metodo159(Token token) {
@@ -748,11 +797,11 @@ public class Semantico implements Constants
     }
 
     private void metodo168(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+        this.TipoFator = this.TipoVar;
     }
 
     private void metodo169(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+        this.TipoFator = this.TipoConst;
     }
 
     private void metodo170(Token token) {
@@ -772,7 +821,15 @@ public class Semantico implements Constants
     }
 
     private void metodo174(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+        //pegar dados do simbolo token.getLexeme na tabela de simbolos
+        System.out.println("metodo 174 "+token.getLexeme());
+        System.out.println(token.toString());
+        System.out.println("metodo 174 "+token.getLexeme());
+        System.out.println(token.toString());
+        System.out.println("metodo 174 "+token.getLexeme());
+        System.out.println(token.toString());
+        System.out.println("metodo 174 "+token.getLexeme());
+        System.out.println(token.toString());
     }
 
     private void metodo175(Token token) {
