@@ -26,9 +26,14 @@ public class Semantico implements Constants
     private String TipoLimiteInferior;
     private String ValorLimiteInferior;
     private String TipoElementos;
+    private int deslocamentoVar;
+    private int METODOID;
+    private String MPP;
+    private String TipoDoMetodo;
     
     public  Semantico()
     {
+        this.deslocamentoVar = -1;
         this.ValorLimiteInferior = "";
         this.TipoLimiteInferior = "";
         this.ValCte = "";
@@ -293,7 +298,6 @@ public class Semantico implements Constants
     private void metodo101(Token token) throws SemanticError {
         //instancia simbolo    
         Simbolo s = new Simbolo( token.getLexeme(),"ID-PROGRAMA" );
-        s.setNivelAtual(0);
         s.setDeslocamento(0);
         //grava nivel atual da tabela de símbolos
         ts.setaNivelAtual(0);
@@ -311,7 +315,6 @@ public class Semantico implements Constants
             throw new SemanticError("ID já declarado.", token.getPosition() );
         }
         Simbolo s = new Simbolo( token.getLexeme(),"ID-CONST" );
-        s.setNivelAtual(0);
         this.ts.adicionaSimbolo(s);
         int posSimboloAtual = this.ts.getQuantiTotalElements()-1;
         this.POSID = posSimboloAtual;
@@ -338,26 +341,49 @@ public class Semantico implements Constants
     private void metodo105(Token token) throws SemanticError {
         /**@todo método incompleto**/
         //Lista de registro
+        Iterator<Integer> itVar;
+        itVar = this.ListaVar.iterator();
+        while( itVar.hasNext() )
+        {
+            Integer nex = itVar.next();
+            Simbolo s = this.ts.pegaSimboloDaTSpelaPosicao(nex);
+            s.setCategoria(this.CategoriaAtual);
+            s.setTipo(this.TipoAtual);
+            this.deslocamentoVar++;
+            s.setDeslocamento(this.deslocamentoVar);
+            this.ts.atualizaElementoNaTS(nex, s);
+        }
+        //Lista de registro
         Iterator<Integer> itReg;
         itReg = this.ListaReg.iterator();
         while( itReg.hasNext() )
         {
             Integer nex = itReg.next();
-            
-        }
-        
-        Iterator<Integer> itVar;
-        itVar = this.ListaReg.iterator();
-        while( itVar.hasNext() )
-        {
-            Integer nex = itVar.next();
-            
+            Simbolo s = this.ts.pegaSimboloDaTSpelaPosicao(nex);
+            s.setCategoria(this.CategoriaAtual);
+            s.setTipo(this.TipoAtual);
+            this.deslocamentoVar++;
+            s.setDeslocamento(this.deslocamentoVar);
+            this.ts.atualizaElementoNaTS(nex, s);
         }
         //Lista de variavel
     }
     private void metodo106(Token token) throws SemanticError {
         
-       // throw new SemanticError("Not supported yet." , 1); //To change body of generated methods, choose Tools | Templates.
+        if ( this.ts.verificaIdDeclarado(token) )
+        {
+            throw new SemanticError("ID já declarado.", token.getPosition() );
+        }
+        Simbolo s = new Simbolo( token.getLexeme(),"ID-METODO" );
+        this.NPF = 0;
+        this.ts.adicionaSimbolo(s);
+        int pos = this.ts.retornaPosicaoSimboloPeloID(token.getLexeme());
+        System.out.println("pos "+pos);
+        this.METODOID = pos;
+        //incrementa nivel atual
+        int na = this.ts.getNivelAtual();
+        na++;
+        this.ts.setaNivelAtual( na );
     }
     private void metodo107(Token token) throws SemanticError {
         
@@ -365,10 +391,15 @@ public class Semantico implements Constants
     }
     private void metodo108(Token token) throws SemanticError {
         
-       // throw new SemanticError("Not supported yet." , 1); //To change body of generated methods, choose Tools | Templates.
+       //pega posição na TS do metodo criado e inseri sua lista de parâmetros
+        Simbolo metd = this.ts.pegaSimboloDaTSpelaPosicao(this.METODOID);
+        metd.setTipo(this.TipoDoMetodo);
+        this.ts.atualizaElementoNaTS(this.METODOID, metd);
     }
     private void metodo109(Token token) throws SemanticError {
-        
+        this.ts.retiraVariaveisLocais();
+        int nva = this.ts.getNivelAtual() - 1;
+        this.ts.setaNivelAtual(nva);
        // throw new SemanticError("Not supported yet." , 1); //To change body of generated methods, choose Tools | Templates.
     }
     private void metodo110(Token token) throws SemanticError {
@@ -377,14 +408,34 @@ public class Semantico implements Constants
     }
     private void metodo111(Token token) throws SemanticError {
         
-       // throw new SemanticError("Not supported yet." , 1); //To change body of generated methods, choose Tools | Templates.
+        Iterator<Integer> itVar;
+        itVar = this.ListaAux.iterator();
+        
+        ArrayList<Simbolo> novaLista = new ArrayList<>();
+        while( itVar.hasNext() )
+        {
+            Integer nex = itVar.next();
+            Simbolo s = this.ts.pegaSimboloDaTSpelaPosicao(nex);
+            s.setCategoria("ID-PARAMETRO");
+            s.setTipo(this.TipoAtual);
+            s.setMPP(this.MPP);
+           
+            novaLista.add(s);
+        }
+        
+        //pega posição na TS do metodo criado e inseri sua lista de parâmetros
+        System.out.println(this.METODOID);
+        Simbolo metd = this.ts.pegaSimboloDaTSpelaPosicao(this.METODOID);
+        metd.setListaPar(novaLista);
+        this.ts.atualizaElementoNaTS(this.METODOID, metd);
+        
     }
     private void metodo112(Token token) throws SemanticError {
-        
+        this.TipoDoMetodo = this.TipoAtual;
        // throw new SemanticError("Not supported yet." , 1); //To change body of generated methods, choose Tools | Templates.
     }
     private void metodo113(Token token) throws SemanticError {
-        
+        this.TipoDoMetodo = "nulo";
        // throw new SemanticError("Not supported yet." , 1); //To change body of generated methods, choose Tools | Templates.
     }
     private void metodo114(Token token) throws SemanticError {
@@ -424,11 +475,11 @@ public class Semantico implements Constants
     }
 
     private void metodo115(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.MPP = "referencia";
     }
 
     private void metodo116(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.MPP = "valor";
     }
 
     private void metodo117(Token token) {

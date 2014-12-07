@@ -7,6 +7,7 @@
 package simbolos;
 
 import gals.Token;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -33,6 +34,7 @@ public class TabelaDeSimbolos {
     }
     public void adicionaSimbolo( Simbolo simbolo )
     {
+        simbolo.setNivelAtual(nivelAtual);
         this.tabelaSimbolos.add(simbolo);
         this.debugTabela();
     }
@@ -100,5 +102,41 @@ public class TabelaDeSimbolos {
             aux++;
         }
         return -1;
+    }
+    public int getNivelAtual()
+    {
+        return this.nivelAtual;
+    }
+
+    public void retiraVariaveisLocais() {
+        System.out.println("&$&$&$&$ TABELA ANTES DE LIMPAR NIVEL");
+        this.debugTabela();
+        int[] paraExcluir = new int[500];
+        Iterator<Simbolo> ite = this.tabelaSimbolos.iterator();
+        int indice = 0;
+        int aux = 0;
+        while( ite.hasNext() )
+        {
+            Simbolo s = ite.next(); 
+            if( s.getNivelAtual()== this.nivelAtual )
+            {
+                paraExcluir[aux] = indice;
+                aux++;
+            }
+            indice++;
+        }
+        
+        for(int i =aux-1; i >= 0; i--)
+        {
+            if( paraExcluir[i] >= 0 )
+            {
+                System.out.println(paraExcluir[i]);
+                this.tabelaSimbolos.remove(paraExcluir[i]); 
+            }
+        }
+        
+        System.out.println("&$&$&$&$ TABELA DEPOIS DE LIMPAR NIVEL");
+        this.debugTabela();
+        
     }
 }

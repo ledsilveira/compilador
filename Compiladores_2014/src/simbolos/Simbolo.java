@@ -6,6 +6,8 @@
 
 package simbolos;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author led
@@ -17,6 +19,24 @@ public class Simbolo {
     protected int deslocamento;
     protected String tipo;
     protected String valor;
+    protected String MPP;
+
+    public String getMPP() {
+        return MPP;
+    }
+
+    public void setMPP(String MPP) {
+        this.MPP = MPP;
+    }
+
+    public ArrayList<Simbolo> getListaPar() {
+        return ListaPar;
+    }
+
+    public void setListaPar(ArrayList<Simbolo> ListaPar) {
+        this.ListaPar = ListaPar;
+    }
+    ArrayList<Simbolo> ListaPar = new ArrayList<>();
 
     public String getTipo() {
         return tipo;
@@ -84,6 +104,7 @@ public class Simbolo {
         this.valor = "";
         this.tipo = "";
     }
+
     public void debugSimbolo()
     {
         System.out.println( this.nome +"    -   "+this.categoria+"    -    "+this.tipo+"    -    "+this.valor  );
