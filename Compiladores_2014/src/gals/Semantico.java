@@ -645,9 +645,12 @@ public class Semantico implements Constants
         {
             throw new SemanticError("'Retorne' só pode ser usado em método com tipo", token.getPosition() );
         }
-        if(!this.TipoExpr.equals(this.TipoDoMetodo))
+        
+        Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
+        String tipoExp = s.getTipo();
+        if(!tipoExp.equals(this.TipoDoMetodo))
         {
-            System.out.println("tipoExpr "+this.TipoExpr);
+            System.out.println("tipoExpr "+tipoExp);
             System.out.println("tipoMetodo "+this.TipoDoMetodo);
             throw new SemanticError("Tipo da expressão diferente do tipo do método", token.getPosition() );
         }
@@ -820,16 +823,91 @@ public class Semantico implements Constants
           //To change body of generated methods, choose Tools | Templates.
     }
 
-    private void metodo174(Token token) {
+    private void metodo174(Token token) throws SemanticError {
         //pegar dados do simbolo token.getLexeme na tabela de simbolos
-        System.out.println("metodo 174 "+token.getLexeme());
-        System.out.println(token.toString());
-        System.out.println("metodo 174 "+token.getLexeme());
-        System.out.println(token.toString());
-        System.out.println("metodo 174 "+token.getLexeme());
-        System.out.println(token.toString());
-        System.out.println("metodo 174 "+token.getLexeme());
-        System.out.println(token.toString());
+        Simbolo atual = this.ts.retornaSimboloPeloID(token.getLexeme());
+        if( atual.getCategoria().equals("ID-VARIAVEL") ||  atual.getCategoria().equals("ID-PARAMETRO") )
+        {
+            if( atual.getTipo().equals("vetor"))
+            {
+                throw new SemanticError("Vetor deve ser indexado", token.getPosition() );
+            }
+            else
+            {
+                if( atual.getTipo().equals("registro"))
+                {
+                    throw new SemanticError("id deve ser qualificado", token.getPosition() );
+                }
+                else
+                {
+                    if( this.Le_VAR )
+                    {
+                        if(atual.getTipo().equals("booleano"))
+                        {
+                            throw new SemanticError("bool. não pode ser lido", token.getPosition() );
+                        }
+                        else
+                        {
+                            this.Le_VAR = false;
+                            /**
+                             * @todo: geração de código leitura
+                             */
+                        }
+                    }
+                    else
+                    {
+                        this.TipoVar = atual.getTipo();
+                    }
+                }
+            }
+        }
+        else
+        {
+            if( this.Le_VAR )
+            {
+                throw new SemanticError("Apenas var. e par. podem ser lidas", token.getPosition() );
+                
+            }
+            else
+            {
+                if( atual.getCategoria().equals("ID-METODO") )
+                {
+                    if( atual.getTipo().equals("nulo") )
+                    {
+                        throw new SemanticError("Esp. mét. c/ tipo", token.getPosition() );
+                    }
+                    else
+                    {
+                        if(this.NPF != 0)
+                        {
+                            throw new SemanticError("Erro num. Par.", token.getPosition() );
+                        }
+                        else
+                        {
+                            System.out.println("IMPLEMENTAR this.TipoVar = Tipo do resultado ");
+                            System.out.println("IMPLEMENTAR this.TipoVar = Tipo do resultado ");
+                            System.out.println("IMPLEMENTAR this.TipoVar = Tipo do resultado ");
+                            //this.TipoVar = Tipo do resultado;
+                            /**
+                             * @todo: gera código
+                             */
+                        }
+                    }
+                }
+                else
+                {
+                    if( atual.getCategoria().equals("ID-CONST") )
+                    {
+                        System.out.println(" Verificar se tipo constante atual ou do simbolo ");
+                        this.TipoVar = this.TipoConst;
+                    }
+                    else
+                    {
+                        throw new SemanticError("esperava-se var, par. método ou constante", token.getPosition() );
+                    }
+                }
+            }
+        }
     }
 
     private void metodo175(Token token) {
