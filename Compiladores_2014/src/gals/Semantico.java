@@ -36,9 +36,13 @@ public class Semantico implements Constants
     private String TipoVar;
     private String TipoTermo;
     private String TipoExpSimples;
+    private int NPA;
+    private String TipoVarIndexada;
     
     public  Semantico()
     {
+        this.TipoVarIndexada = "";
+        this.NPA = 0;
         this.TipoExpSimples = "";
         this.TipoTermo = "";
         this.TipoVar = "";
@@ -699,8 +703,26 @@ public class Semantico implements Constants
         //To change body of generated methods, choose Tools | Templates.
     }
 
-    private void metodo143(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo143(Token token) throws SemanticError {
+        if( this.contextoEXPR.equals("par-atual"))
+        {
+            this.NPA++;
+            //verifica se existe parametro formal correspondente e
+            //se o tipo e MPP são compativeis
+        }
+        if( this.contextoEXPR.equals("impressao"))
+        {
+           if( this.TipoExpr.equals("booleano"))
+           {
+               throw new SemanticError("Tipo inválido para impressão",token.getPosition());
+           }
+           else
+           {
+               /**
+                * @todo Gera código par aimpressão
+                */
+           }
+        }
     }
 
     private void metodo144(Token token) {
@@ -772,31 +794,45 @@ public class Semantico implements Constants
     }
 
     private void metodo161(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+        /**
+         * @todo: Guarda operador para futura geração de código
+         */
     }
 
     private void metodo162(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+        /**
+         * @todo: Guarda operador para futura geração de código
+         */
     }
 
     private void metodo163(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+        /**
+         * @todo: Guarda operador para futura geração de código
+         */
     }
 
     private void metodo164(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+        /**
+         * @todo: Guarda operador para futura geração de código
+         */
     }
 
-    private void metodo165(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+    private void metodo165(Token token) throws SemanticError {
+        if( !this.TipoFator.equals("booleano"))
+        {
+            throw new SemanticError("Op. 'nao' exige operando booleano", token.getPosition());
+        }
     }
 
-    private void metodo166(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+    private void metodo166(Token token) throws SemanticError {
+        if( !this.TipoFator.equals("inteiro") && !this.TipoFator.equals("real"))
+        {
+            throw new SemanticError("Op. unário exige operando numérico", token.getPosition());
+        }
     }
 
     private void metodo167(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+        this.TipoFator = this.TipoExpr;
     }
 
     private void metodo168(Token token) {
@@ -807,20 +843,102 @@ public class Semantico implements Constants
         this.TipoFator = this.TipoConst;
     }
 
-    private void metodo170(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+    private void metodo170(Token token) throws SemanticError {
+          Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
+          if( !s.getCategoria().equals("ID-METODO"))
+          {
+              throw new SemanticError("id deveria ser um método",token.getPosition());
+          }
+          else
+          {
+              if( s.getTipo().equals("nulo") )
+              {
+                  throw new SemanticError("esp. método com tipo",token.getPosition());
+              }
+              else
+              {
+                  if( this.Le_VAR )
+                  {
+                      throw new SemanticError("só var/par. podem ser lidos",token.getPosition());
+                  }
+              }
+          }
     }
 
-    private void metodo171(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+    private void metodo171(Token token) throws SemanticError {
+        if( this.NPA == this.NPF )
+        {
+           // if( TipoVar == tipo do resultado da função então gera código para ativação do método)
+        }
+        else
+        {
+            throw new SemanticError("Erro na quantidade de parâmetros", token.getPosition());
+        }
     }
 
-    private void metodo172(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+    private void metodo172(Token token) throws SemanticError {
+        if( this.TipoVarIndexada.equals("cadeia") )
+        {
+            if(!this.TipoExpr.equals("inteiro"))
+            {
+                throw new SemanticError("Indice deveria ser inteiro",token.getPosition());
+            }
+            else
+            {
+                this.TipoVar = "caracter";
+            }
+        }
+        else
+        {
+            /*
+            se TipoExpr <> tipo do índice do vetor
+            então ERRO(“Tipo índice inválido”)
+            senao TipoVar := TipoElementos do vetor
+            */
+        }
+        
+        if(  this.Le_VAR )
+        {
+            if( this.TipoVar.equals("booleano"))
+            {
+                throw new SemanticError("var booleana nao pode ser lida", token.getPosition());
+            }
+            else
+            {
+                this.Le_VAR = false;
+                /**
+                 * @todo: gera cod. para leitura
+                 */
+            }
+        }
     }
 
-    private void metodo173(Token token) {
-          //To change body of generated methods, choose Tools | Templates.
+    private void metodo173(Token token) throws SemanticError {
+          Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
+          if( !s.getCategoria().equals("ID-CAMPO-DE-REGISTRO"))
+          {
+              throw new SemanticError("esperava-se um campo de registro", token.getPosition());
+          }
+          else
+          {
+              //se id é campo do regAtual
+              //então TipoVar := Tipo do id
+              //senao ERRO (“id não é campo do reg. atual”)
+          }
+          if( this.Le_VAR)
+          {
+              if( this.TipoVar.equals("booleano"))
+              {
+                  throw new SemanticError("var booleana não pode ser lida", token.getPosition());
+              }
+              else
+              {
+                  this.Le_VAR = false;
+                  /**
+                   * @todo gera cod p/ leitura
+                   */
+              }
+          }
     }
 
     private void metodo174(Token token) throws SemanticError {
