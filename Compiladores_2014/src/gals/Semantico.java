@@ -38,9 +38,13 @@ public class Semantico implements Constants
     private String TipoExpSimples;
     private int NPA;
     private String TipoVarIndexada;
+    private String TipoLadoEsq;
+    private int regAtual;
+    private String OP_REL;
     
     public  Semantico()
     {
+        this.TipoLadoEsq = "";
         this.TipoVarIndexada = "";
         this.NPA = 0;
         this.TipoExpSimples = "";
@@ -384,6 +388,9 @@ public class Semantico implements Constants
             s.setDeslocamento(this.deslocamentoVar);
             this.ts.atualizaElementoNaTS(nex, s);
         }
+        //limpar lista
+        this.ListaReg.clear();
+        this.ListaVar.clear();
         //Lista de variavel
     }
     private void metodo106(Token token) throws SemanticError {
@@ -645,13 +652,21 @@ public class Semantico implements Constants
     }
 
     private void metodo132(Token token) throws SemanticError {
+         System.out.println("tipoMetodo "+this.TipoDoMetodo);
+          System.out.println("token atual "+token.getLexeme());
+          System.out.println("TipoExp "+this.TipoExpr);
         if( this.TipoDoMetodo.equals("") || this.TipoDoMetodo.equals("nulo") )
         {
             throw new SemanticError("'Retorne' só pode ser usado em método com tipo", token.getPosition() );
         }
         
-        Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
-        String tipoExp = s.getTipo();
+//        Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
+//        if( s == null)
+//        {
+//             throw new SemanticError(" simbolo não existe ERRO NÂO ESPERADO", token.getPosition() );
+//        }
+//        String tipoExp = s.getTipo();
+        String tipoExp = this.TipoExpr;
         if(!tipoExp.equals(this.TipoDoMetodo))
         {
             System.out.println("tipoExpr "+tipoExp);
@@ -663,40 +678,153 @@ public class Semantico implements Constants
          */
     }
 
-    private void metodo133(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo133(Token token) throws SemanticError {
+        Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
+        if( s.getCategoria().equals("ID-VARIAVEL") || s.getCategoria().equals("ID-PARAMETRO"))
+        {
+            if( s.getTipo().equals("vetor"))
+            {
+                throw new SemanticError("id deveria ser indexado", token.getPosition() );
+            }
+            else
+            {
+                if( s.getTipo().equals("registro"))
+                {
+                    throw new SemanticError("id deveria ser qualificado", token.getPosition() );  
+                } 
+                else
+                {
+                    this.TipoLadoEsq = s.getTipo();
+                }
+            }
+        }
+        else
+        {
+            throw new SemanticError("id deveria ser var ou par", token.getPosition() );
+        }
     }
-
-    private void metodo134(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo134(Token token) throws SemanticError {
+        if( !this.TipoExpr.equals(this.TipoLadoEsq) )
+        {
+            if( ( this.TipoExpr.equals("real") || this.TipoExpr.equals("inteiro")) && ( this.TipoLadoEsq.equals("real") || this.TipoLadoEsq.equals("inteiro")))
+            {
+               System.out.println("tipo exp: "+this.TipoExpr);
+               System.out.println("tipo lado esq: "+this.TipoLadoEsq);
+               System.out.println("tipo real compativel com tipo inteiro ");
+            }
+            else
+            {
+                 if( ( this.TipoExpr.equals("cadeia") || this.TipoExpr.equals("caracter")) && ( this.TipoLadoEsq.equals("cadeia") || this.TipoLadoEsq.equals("caracter")))
+                {
+                   System.out.println("tipo exp: "+this.TipoExpr);
+                   System.out.println("tipo lado esq: "+this.TipoLadoEsq);
+                   System.out.println("tipo cadeia compativel com caracter ");
+                }
+                else
+                {
+                    System.out.println("tipo exp: "+this.TipoExpr);
+                    System.out.println("tipo lado esq: "+this.TipoLadoEsq);
+                    throw new SemanticError("Tipos incompatives", token.getPosition());
+                }
+            }
+        }
+        /**
+         * @todo: geração de código
+         */
     }
 
     private void metodo135(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        System.out.println("IMPLEMENTAR 135 tipoAtual "+this.TipoAtual);
+        System.out.println(" categoria de ID "+this.CategoriaAtual);
+        System.out.println(" posId "+this.POSID);
+        Simbolo s= this.ts.pegaSimboloDaTSpelaPosicao(this.POSID);
+        System.out.println("Simbolo em POSID "+s.getNome()+" tipo "+s.getTipo()+" categoria "+s.getCategoria());
+        //if( this.TipoAtual.equals())
+        s.debugSimbolo();
     }
 
-    private void metodo136(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo136(Token token) throws SemanticError {
+        if( this.TipoVarIndexada.equals("cadeia"))
+        {
+            if( !this.TipoExpr.equals("inteiro") )
+            {
+                throw new SemanticError("índice deveria ser inteiro", token.getPosition());
+            }
+            else
+            {
+                this.TipoLadoEsq = "caracter";
+            }
+        }
+        else
+        {
+            System.out.println("atual "+this.TipoAtual);
+            System.out.println(""+token.getLexeme());
+            System.out.println("posid"+this.POSID);
+                /**
+                 * @todo implementar esta parte 136
+                 */
+                    //TipoExpr <> tipo indice do vetor
+        }
     }
 
-    private void metodo137(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo137(Token token) throws SemanticError {
+        System.out.println("cat atual "+this.CategoriaAtual);
+        
+        Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
+        System.out.println("categoria token "+s.getCategoria());
+        if( !s.getCategoria().equals("ID-METODO"))
+        {
+            throw new SemanticError("Id deveria ser um método", token.getPosition());
+        }
+        else
+        {
+            if( s.getTipo().equals("nulo"))
+            {
+               throw new SemanticError("Esperava-se um método com tipo", token.getPosition()); 
+            }
+        }
     }
 
     private void metodo138(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        if( this.NPA == 1)
+        {
+            this.contextoEXPR = "par-atual";
+            //verifica se existe parametro formal correspondete e se tipo e MPP são compativeis
+        }
     }
 
-    private void metodo139(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo139(Token token) throws SemanticError {
+        if( this.NPA != this.NPF)
+        {
+            throw new SemanticError("Erro na quantidade de parâmetros");
+        }
+        else
+        {
+            /**
+             * @todo Gera código
+             */
+        }
     }
 
-    private void metodo140(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo140(Token token) throws SemanticError {
+        Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
+        if( !s.getCategoria().equals("ID-CAMPO-DE-REGISTRO"))
+        {
+            throw new SemanticError("Esperava-se um campo de registro",token.getPosition());
+        }
+        else
+        {
+            if(!s.getTipo().equals("registro"))
+            {
+                throw new SemanticError("Apenas registros podem ser qualificados",token.getPosition());
+            }
+            this.regAtual = this.POSID;
+        }
     }
 
     private void metodo141(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        System.out.println(""+this.CategoriaAtual);
+        System.out.println(""+token.getLexeme());
     }
 
     private void metodo142(Token token) {
@@ -729,32 +857,55 @@ public class Semantico implements Constants
         this.TipoExpr = this.TipoExpSimples;
     }
 
-    private void metodo145(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo145(Token token) throws SemanticError {
+        if( !this.TipoExpr.equals(this.TipoExpSimples) )
+        {
+            if( ( this.TipoExpr.equals("real") || this.TipoExpr.equals("inteiro")) && ( this.TipoExpSimples.equals("real") || this.TipoExpSimples.equals("inteiro")))
+            {
+               System.out.println("tipo exp: "+this.TipoExpr);
+               System.out.println("tipo simples: "+this.TipoExpSimples);
+               System.out.println("tipo real compativel com tipo inteiro ");
+            }
+            else
+            {
+                 if( ( this.TipoExpr.equals("cadeia") || this.TipoExpr.equals("caracter")) && ( this.TipoExpSimples.equals("cadeia") || this.TipoExpSimples.equals("caracter")))
+                {
+                   System.out.println("tipo exp: "+this.TipoExpr);
+                   System.out.println("tipo simples: "+this.TipoExpSimples);
+                   System.out.println("tipo cadeia compativel com caracter ");
+                }
+                else
+                {
+                    System.out.println("tipo exp: "+this.TipoExpr);
+                    System.out.println("tipo simples: "+this.TipoExpSimples);
+                    throw new SemanticError("Tipos incompatives", token.getPosition());
+                }
+            }
+        }
     }
 
     private void metodo146(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.OP_REL = token.getLexeme();
     }
 
     private void metodo147(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.OP_REL = token.getLexeme();
     }
 
     private void metodo148(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.OP_REL = token.getLexeme();
     }
 
     private void metodo149(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.OP_REL = token.getLexeme();
     }
 
     private void metodo150(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.OP_REL = token.getLexeme();
     }
 
     private void metodo151(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        this.OP_REL = token.getLexeme();
     }
 
     private void metodo152(Token token) {
@@ -890,6 +1041,9 @@ public class Semantico implements Constants
         }
         else
         {
+            System.out.println("IMPLEMENTAR 172"+ token.getLexeme());
+            System.out.println(this.POSID);
+            this.TipoVar = "inteiro";
             /*
             se TipoExpr <> tipo do índice do vetor
             então ERRO(“Tipo índice inválido”)
@@ -921,6 +1075,8 @@ public class Semantico implements Constants
           }
           else
           {
+              System.out.println(""+s.getTipo()+" "+s.getNome());
+              this.TipoVar = "inteiro";
               //se id é campo do regAtual
               //então TipoVar := Tipo do id
               //senao ERRO (“id não é campo do reg. atual”)
@@ -1053,7 +1209,15 @@ public class Semantico implements Constants
          * @todo gambiarra para caracter? 'a'
          * 
          */
+       
+        if( token.getLexeme().replace("'","").length() == 1)
+        {
+           this.TipoConst = "caracter"; 
+        }
+        else
+        {
           this.TipoConst = "literal";
-          this.ValCte = token.getLexeme();
+        }
+        this.ValCte = token.getLexeme();
     }
 }
