@@ -1,5 +1,6 @@
 package gals;
 
+import com.sun.corba.se.impl.logging.ORBUtilSystemException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -389,8 +390,7 @@ public class Semantico implements Constants
             this.ts.atualizaElementoNaTS(nex, s);
         }
         //limpar lista
-        this.ListaReg.clear();
-        this.ListaVar.clear();
+
         //Lista de variavel
     }
     private void metodo106(Token token) throws SemanticError {
@@ -760,6 +760,8 @@ public class Semantico implements Constants
             System.out.println("atual "+this.TipoAtual);
             System.out.println(""+token.getLexeme());
             System.out.println("posid"+this.POSID);
+            Simbolo s = this.ts.pegaSimboloDaTSpelaPosicao(this.POSID);
+            System.out.println(""+s.getTipo());
                 /**
                  * @todo implementar esta parte 136
                  */
@@ -822,13 +824,43 @@ public class Semantico implements Constants
         }
     }
 
-    private void metodo141(Token token) {
+    private void metodo141(Token token) throws SemanticError {
+        Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
+        if( !s.getCategoria().equals("ID-CAMPO-DE-REGISTRO"))
+        {
+            throw new SemanticError("esperava-se um campo de registro",token.getPosition());
+        }
+        
         System.out.println(""+this.CategoriaAtual);
         System.out.println(""+token.getLexeme());
     }
 
-    private void metodo142(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo142(Token token) throws SemanticError {
+        Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
+        if( !s.getCategoria().equals("ID-METODO"))
+        {
+            throw new SemanticError("deveria ser um método",token.getPosition());
+        }
+        else
+        {
+            if( !s.getTipo().equals("nulo") )
+            {
+                throw new SemanticError("Esperava-se método sem tipo", token.getPosition());
+            }
+            else
+            {
+                if( this.NPF != 0 )
+                {
+                    throw new SemanticError("Erro na quant. de par.");
+                }
+                else
+                {
+                    /**
+                     * @todo G código para chamada de método
+                     */
+                }
+            }
+        }
     }
 
     private void metodo143(Token token) throws SemanticError {

@@ -20,6 +20,15 @@ public class Simbolo {
     protected String tipo;
     protected String valor;
     protected String MPP;
+    protected String tipoIndiceVetor;
+
+    public String getTipoIndiceVetor() {
+        return tipoIndiceVetor;
+    }
+
+    public void setTipoIndiceVetor(String tipoIndiceVetor) {
+        this.tipoIndiceVetor = tipoIndiceVetor;
+    }
 
     public String getMPP() {
         return MPP;
