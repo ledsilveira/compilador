@@ -28,6 +28,10 @@ public class TabelaDeSimbolos {
         {
             Simbolo nex = (Simbolo) it.next();
             nex.debugSimbolo();
+            if( nex.getTipo().equals("vetor") )
+            {
+                nex.dedugVetor();
+            }
         }
         System.out.println( "\u001B[31m----------- FIM DA TABELA DE SÍMBOLOS -----------" );
         

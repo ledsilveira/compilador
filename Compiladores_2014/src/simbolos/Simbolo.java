@@ -7,6 +7,7 @@
 package simbolos;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -21,6 +22,43 @@ public class Simbolo {
     protected String valor;
     protected String MPP;
     protected String tipoIndiceVetor;
+    protected String tipoElementosVetor;
+    protected String ValorLimiteInferior;
+    protected String valorLimiteSuperior;
+    protected ArrayList<Simbolo> elementosVetor = new ArrayList<>();
+
+    public String getTipoElementosVetor() {
+        return tipoElementosVetor;
+    }
+
+    public void setTipoElementosVetor(String tipoElementosVetor) {
+        this.tipoElementosVetor = tipoElementosVetor;
+    }
+
+    public String getValorLimiteInferior() {
+        return ValorLimiteInferior;
+    }
+
+    public void setValorLimiteInferior(String ValorLimiteInferior) {
+        this.ValorLimiteInferior = ValorLimiteInferior;
+    }
+
+    public String getValorLimiteSuperior() {
+        return valorLimiteSuperior;
+    }
+
+    public void setValorLimiteSuperior(String valorLimiteSuperior) {
+        this.valorLimiteSuperior = valorLimiteSuperior;
+    }
+
+    public ArrayList<Simbolo> getElementosVetor() {
+        return elementosVetor;
+    }
+
+    public void setElementosVetor(ArrayList<Simbolo> elementosVetor) {
+        this.elementosVetor = elementosVetor;
+    }
+    
 
     public String getTipoIndiceVetor() {
         return tipoIndiceVetor;
@@ -117,5 +155,14 @@ public class Simbolo {
     public void debugSimbolo()
     {
         System.out.println( this.nome +"    -   "+this.categoria+"    -    "+this.tipo+"    -    "+this.valor  );
+    }
+
+    public void dedugVetor() {
+        Iterator<Simbolo> elVet = this.elementosVetor.iterator();
+        while( elVet.hasNext() )
+        {
+            Simbolo eleVet = (Simbolo) elVet.next();
+            System.out.println( "Elemento vetor: "+this.nome+" | "+eleVet.getNome() +"    -   "+eleVet.getCategoria()+"    -    "+eleVet.getTipo()+"    -    "+this.valor  );
+        }
     }
 }
