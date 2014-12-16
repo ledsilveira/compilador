@@ -26,6 +26,7 @@ public class Simbolo {
     protected String ValorLimiteInferior;
     protected String valorLimiteSuperior;
     protected ArrayList<Simbolo> elementosVetor = new ArrayList<>();
+    protected ArrayList<Simbolo> elementosRegistro;
 
     public String getTipoElementosVetor() {
         return tipoElementosVetor;
@@ -108,6 +109,7 @@ public class Simbolo {
         this.deslocamento = 0;
         this.valor = "";
         this.tipo = "";
+        this.elementosRegistro = new ArrayList<>();
     }
 
     public String getNome() {
@@ -150,8 +152,17 @@ public class Simbolo {
         this.deslocamento = 0;
         this.valor = "";
         this.tipo = "";
+        this.elementosRegistro = new ArrayList<>();
     }
 
+    public ArrayList<Simbolo> getElementosRegistro() {
+        return elementosRegistro;
+    }
+
+    public void setElementosRegistro(ArrayList<Simbolo> elementosRegistro) {
+        this.elementosRegistro = elementosRegistro;
+    }
+    
     public void debugSimbolo()
     {
         System.out.println( this.nome +"    -   "+this.categoria+"    -    "+this.tipo+"    -    "+this.valor  );
@@ -163,6 +174,15 @@ public class Simbolo {
         {
             Simbolo eleVet = (Simbolo) elVet.next();
             System.out.println( "Elemento vetor: "+this.nome+" | "+eleVet.getNome() +"    -   "+eleVet.getCategoria()+"    -    "+eleVet.getTipo()+"    -    "+this.valor  );
+        }
+    }
+    
+    public void dedugRegistro() {
+        Iterator<Simbolo> elRet = this.elementosRegistro.iterator();
+        while( elRet.hasNext() )
+        {
+            Simbolo simboloRegistro = (Simbolo) elRet.next();
+            System.out.println( "Elemento Registro: "+this.nome+" | "+simboloRegistro.getNome() +"    -   "+simboloRegistro.getCategoria()+"    -    "+simboloRegistro.getTipo()+"    -    " );
         }
     }
 }

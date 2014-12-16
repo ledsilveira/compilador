@@ -6,6 +6,7 @@
 
 package simbolos;
 
+import gals.SemanticError;
 import gals.Token;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -31,6 +32,10 @@ public class TabelaDeSimbolos {
             if( nex.getTipo().equals("vetor") )
             {
                 nex.dedugVetor();
+            }
+            if( nex.getTipo().equals("registro"))
+            {
+                nex.dedugRegistro();
             }
         }
         System.out.println( "\u001B[31m----------- FIM DA TABELA DE SÍMBOLOS -----------" );
@@ -143,4 +148,6 @@ public class TabelaDeSimbolos {
         this.debugTabela();
         
     }
+
+    
 }

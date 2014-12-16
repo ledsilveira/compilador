@@ -17,7 +17,7 @@ public class Semantico implements Constants
     int POSID;
     String contextoLID;
     String CategoriaAtual;  
-    ArrayList <Integer>ListaReg;
+    ArrayList <Simbolo>ListaReg;
     ArrayList <Integer>ListaVar;
     ArrayList <Integer>ListaAux;
     protected int NPF;
@@ -44,9 +44,15 @@ public class Semantico implements Constants
     private String OP_REL;
     private String TipoLimiteSuperior;
     private String ValorLimiteSuperior;
+    ArrayList<Simbolo> listaRefatora;
     
     public  Semantico()
     {
+        this.eh_registro = false;
+        this.listaRefatora = new ArrayList<>();
+        this.ValorLimiteSuperior = "";
+        this.TipoLimiteSuperior = "";
+        this.OP_REL ="";
         this.TipoLadoEsq = "";
         this.TipoVarIndexada = "";
         this.NPA = 0;
@@ -364,8 +370,7 @@ public class Semantico implements Constants
         }
     }
     private void metodo105(Token token) throws SemanticError {
-        System.out.println("cateforia Atual: "+this.CategoriaAtual);
-        System.out.println("Tipo Atual: "+this.TipoAtual);
+
         
         /**@todo método incompleto**/
         //Lista de registro
@@ -390,91 +395,110 @@ public class Semantico implements Constants
             
 // int deslocaTotal = this.ValorLimiteInferior - this.
         }
-        while( itVar.hasNext() )
+        if( !this.eh_registro )
         {
-            Integer nex = itVar.next();
-            Simbolo s = this.ts.pegaSimboloDaTSpelaPosicao(nex);
-            s.setCategoria(this.CategoriaAtual);
-            s.setTipo(this.TipoAtual);
-            s.setValorLimiteInferior(this.ValorLimiteInferior);
-            s.setValorLimiteSuperior(this.ValorLimiteSuperior);
-            this.deslocamentoVar++;
-            s.setDeslocamento(this.deslocamentoVar);
-            s.setTipoElementosVetor(this.TipoElementos);
-            //inserir os elementos do vetor
-            if( this.TipoAtual.equals("vetor") )
+            while( itVar.hasNext() )
             {
-                ArrayList<Simbolo> elementosVetor = new ArrayList<>();
-                if( this.TipoLimiteSuperior.equals("caracter"))
+
+                Integer nex = itVar.next();
+                Simbolo s = this.ts.pegaSimboloDaTSpelaPosicao(nex);
+
+                System.out.println("listaVar "+s.getNome());
+                s.setCategoria(this.CategoriaAtual);
+                s.setTipo(this.TipoAtual);
+
+                this.deslocamentoVar++;
+                s.setDeslocamento(this.deslocamentoVar);
+
+                //inserir os elementos do vetor
+                if( this.TipoAtual.equals("vetor") )
                 {
-                    char limiteAtualS = this.ValorLimiteInferior.charAt(1);
-                    System.out.println("AAAA"+deslocaTotal);
-                    
-                    for(int i =0; i<=deslocaTotal;i++)
+                    s.setValorLimiteInferior(this.ValorLimiteInferior);
+                    s.setValorLimiteSuperior(this.ValorLimiteSuperior);
+
+                    ArrayList<Simbolo> elementosVetor = new ArrayList<>();
+                    if( this.TipoLimiteSuperior.equals("caracter"))
                     {
-                        //nome vai ser a posiçao do array ou algo.
-                        Simbolo novo = new Simbolo(""+limiteAtualS);
-                        novo.setTipo(this.TipoElementos);
-                        limiteAtualS++;
-                        elementosVetor.add(novo);
+                        char limiteAtualS = this.ValorLimiteInferior.charAt(1);
+                        System.out.println("AAAA"+deslocaTotal);
+
+                        for(int i =0; i<=deslocaTotal;i++)
+                        {
+                            //nome vai ser a posiçao do array ou algo.
+                            Simbolo novo = new Simbolo(""+limiteAtualS);
+                            novo.setTipo(this.TipoElementos);
+                            limiteAtualS++;
+                            elementosVetor.add(novo);
+                        }
                     }
+                    else
+                    {
+                        int limiteAtualI = Integer.parseInt(this.ValorLimiteInferior);
+                        System.out.println("vetor de int "+deslocaTotal);
+
+                        for(int i =0; i<=deslocaTotal;i++)
+                        {
+                            //nome vai ser a posiçao do array ou algo.
+                            Simbolo novo = new Simbolo(""+limiteAtualI);
+                            novo.setTipo(this.TipoElementos);
+                            limiteAtualI++;
+                            elementosVetor.add(novo);
+                        }
+                    }
+
+
+
+                    if( elementosVetor.size() > 0 )
+                        s.setElementosVetor(elementosVetor);
                 }
-                else
+                if( this.TipoAtual.equals("registro"))
                 {
-                    int limiteAtualI = Integer.parseInt(this.ValorLimiteInferior);
-                    System.out.println("vetor de int "+deslocaTotal);
-                    
-                    for(int i =0; i<=deslocaTotal;i++)
-                    {
-                        //nome vai ser a posiçao do array ou algo.
-                        Simbolo novo = new Simbolo(""+limiteAtualI);
-                        novo.setTipo(this.TipoElementos);
-                        limiteAtualI++;
-                        elementosVetor.add(novo);
-                    }
+                    s.setElementosRegistro(this.ListaReg);
+
+                    System.out.println(" REGISTROOO salvar quando for 2 com mesmos valores");
                 }
-            
-            
-                
-                if( elementosVetor.size() > 0 )
-                    s.setElementosVetor(elementosVetor);
+
+                this.ts.atualizaElementoNaTS(nex, s);
             }
-            if( this.TipoAtual.equals("registro"))
-            {
-                
-                System.out.println(" REGISTROOO salvar quando for 2 com mesmos valores");
-            }
-            
-            this.ts.atualizaElementoNaTS(nex, s);
         }
         //Lista de registro
-        Iterator<Integer> itReg;
+        Iterator<Simbolo> itReg;
         itReg = this.ListaReg.iterator();
+        listaRefatora.clear();
         while( itReg.hasNext() )
         {
-            Integer nex = itReg.next();
-            Simbolo s = this.ts.pegaSimboloDaTSpelaPosicao(nex);
-            s.setCategoria(this.CategoriaAtual);
             
-            s.setTipo(this.TipoAtual);
+            Simbolo regAct = itReg.next();
+            
+            System.out.println("ListaReg "+regAct.getNome());
+            //Simbolo s = this.ts.pegaSimboloDaTSpelaPosicao(nex);
+            regAct.setCategoria(this.CategoriaAtual);
+            
+            regAct.setTipo(this.TipoAtual);
             this.deslocamentoVar++;
-            s.setDeslocamento(this.deslocamentoVar);
-            this.ts.atualizaElementoNaTS(nex, s);
+            regAct.setDeslocamento(this.deslocamentoVar);
+            listaRefatora.add(regAct);
+            regAct.debugSimbolo();
+           // this.ts.atualizaElementoNaTS(nex, s);
         }
+        this.ListaReg = listaRefatora;
+       
+        
         
         
         //Verifica se existe uma lista de registro, pois se tiver lista de regitros primeiro limpa ela
         // e somente ela
         if( this.ListaReg.size() > 0)
         {
-            this.ListaReg.clear();
+           // this.ListaReg.clear();
         }
         // só apaga lista de variaveis quando não tiver uma lista de registros a validar
         else
         {
            if( this.ListaVar.size() > 0)
             {
-                this.ListaVar.clear();
+               // this.ListaVar.clear();
+                //this.ListaReg.clear();
             } 
         }
         
@@ -561,14 +585,15 @@ public class Semantico implements Constants
             }
             Simbolo s = new Simbolo( token.getLexeme() );
             
-            this.ts.adicionaSimbolo(s);
-            int posSimboloAtual = this.ts.getQuantiTotalElements()-1;
+            
             if( this.eh_registro )
             {
-                this.ListaReg.add(posSimboloAtual);
+                this.ListaReg.add(s);
             }
             else
             {
+                this.ts.adicionaSimbolo(s);
+                int posSimboloAtual = this.ts.getQuantiTotalElements()-1;
                 this.ListaVar.add(posSimboloAtual);
             }
         }
@@ -922,16 +947,52 @@ public class Semantico implements Constants
     }
 
     private void metodo141(Token token) throws SemanticError {
-        Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
-        if( !s.getCategoria().equals("ID-CAMPO-DE-REGISTRO"))
+        System.out.println(this.regAtual);
+        this.ts.debugTabela();
+        Simbolo s = this.ts.pegaSimboloDaTSpelaPosicao(this.regAtual);
+        if( s == null )
         {
-            throw new SemanticError("esperava-se um campo de registro",token.getPosition());
+            throw new SemanticError("Registro inválido", token.getPosition());
         }
+        //Iterando sobre a lista de elementos do registro
+        ArrayList<Simbolo> listadosRegAtual = new ArrayList<>();
+        listadosRegAtual = s.getElementosRegistro();
+        s.dedugRegistro();
+        Iterator<Simbolo> it = listadosRegAtual.iterator();
+        
+        String tipoDoId = "";
+        boolean encontraCampo = false;
+        while( it.hasNext() )
+        {
+            Simbolo next = it.next();
+            next.debugSimbolo();
+            if( next.getNome().equals(token.getLexeme()))
+            {
+                
+                System.out.println("0 "+next.getCategoria());
+                if( !next.getCategoria().equals("ID-CAMPO-DE-REGISTRO"))
+                {
+                    throw new SemanticError("esperava-se um campo de registro",token.getPosition());
+                }
+                tipoDoId = next.getTipo();
+                encontraCampo = true;
+            }
+            
+        }
+        if( encontraCampo )
+        {
+            this.TipoLadoEsq = tipoDoId;
+        }
+        else
+        {
+            throw new SemanticError("id não é campo de registro atual", token.getPosition());
+        }
+        
         System.out.println("regAtual: "+this.regAtual);
         // verifica se token faz parte de registro
-        this.TipoLadoEsq = s.getTipo();
-        System.out.println(""+this.CategoriaAtual);
-        System.out.println(""+token.getLexeme());
+        
+        System.out.println("tipo do campo registro"+tipoDoId);
+        System.out.println("tokem "+token.getLexeme());
     }
 
     private void metodo142(Token token) throws SemanticError {
