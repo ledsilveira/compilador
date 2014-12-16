@@ -32,6 +32,10 @@ public class TabelaDeSimbolos {
             {
                 nex.dedugVetor();
             }
+            if( nex.getTipo().equals("registro"))
+            {
+                nex.dedugRegistros();
+            }
         }
         System.out.println( "\u001B[31m----------- FIM DA TABELA DE SÍMBOLOS -----------" );
         
@@ -142,5 +146,13 @@ public class TabelaDeSimbolos {
         System.out.println("&$&$&$&$ TABELA DEPOIS DE LIMPAR NIVEL");
         this.debugTabela();
         
+    }
+    public Simbolo  getLastSimbolo()
+    {
+        return this.tabelaSimbolos.get( this.tabelaSimbolos.size()-1); 
+    }
+
+    public void deleteSimboloPelaPosicao(int indiceApag) {
+        this.tabelaSimbolos.remove(indiceApag);
     }
 }

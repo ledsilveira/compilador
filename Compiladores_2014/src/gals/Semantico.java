@@ -390,6 +390,8 @@ public class Semantico implements Constants
             
 // int deslocaTotal = this.ValorLimiteInferior - this.
         }
+        //Lista temporaria de variaveis do/s registros
+        ArrayList<Simbolo> listaRegToVar = new ArrayList<>();
         while( itVar.hasNext() )
         {
             Integer nex = itVar.next();
@@ -439,12 +441,53 @@ public class Semantico implements Constants
                 if( elementosVetor.size() > 0 )
                     s.setElementosVetor(elementosVetor);
             }
-            if( this.TipoAtual.equals("registro"))
-            {
-                
-                System.out.println(" REGISTROOO salvar quando for 2 com mesmos valores");
-            }
             
+            
+            
+            if( this.TipoAtual.equals("registro") )
+            {
+                boolean temRegistro= true;
+                
+                while( temRegistro )
+                {
+                    Simbolo vaiParaReg =  this.ts.getLastSimbolo();
+                    int indiceApag = this.ts.getQuantiTotalElements() -1;
+                    //verifica se id esta na lista var
+                    Iterator<Integer> itVartEMP;
+                    itVartEMP = this.ListaVar.iterator();
+                    boolean elementoEVar = false;
+                    while( itVartEMP.hasNext() )
+                    {
+                        int TEMP =  itVartEMP.next();
+                        Simbolo maTemp = this.ts.pegaSimboloDaTSpelaPosicao(TEMP);
+                        if( maTemp.getNome().equals(vaiParaReg.getNome()))
+                        {
+                            elementoEVar = true;
+                        }
+                    }
+                    if( elementoEVar )
+                    {
+                       temRegistro = false; 
+                    }
+                    else
+                    {
+                        
+                    
+                        if( vaiParaReg.getCategoria().equals("ID-CAMPO-DE-REGISTRO"))
+                        {
+                            listaRegToVar.add(vaiParaReg);
+                            this.ts.deleteSimboloPelaPosicao(indiceApag);
+                        }
+                        else
+                        {
+                            temRegistro = false;
+                        }
+                    }
+                    
+                }
+                s.setElementosRegistros(listaRegToVar);
+                System.out.println(" REGISTROOO salvar quando for 2 com mesmos valores "+s.getNome());
+            }
             this.ts.atualizaElementoNaTS(nex, s);
         }
         //Lista de registro
@@ -467,6 +510,7 @@ public class Semantico implements Constants
         // e somente ela
         if( this.ListaReg.size() > 0)
         {
+            
             this.ListaReg.clear();
         }
         // só apaga lista de variaveis quando não tiver uma lista de registros a validar

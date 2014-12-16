@@ -26,6 +26,7 @@ public class Simbolo {
     protected String ValorLimiteInferior;
     protected String valorLimiteSuperior;
     protected ArrayList<Simbolo> elementosVetor = new ArrayList<>();
+    protected ArrayList<Simbolo> elementosRegistros = new ArrayList<>();
 
     public String getTipoElementosVetor() {
         return tipoElementosVetor;
@@ -165,4 +166,22 @@ public class Simbolo {
             System.out.println( "Elemento vetor: "+this.nome+" | "+eleVet.getNome() +"    -   "+eleVet.getCategoria()+"    -    "+eleVet.getTipo()+"    -    "+this.valor  );
         }
     }
+    
+    public void dedugRegistros() {
+        Iterator<Simbolo> elVet = this.elementosRegistros.iterator();
+        while( elVet.hasNext() )
+        {
+            Simbolo eleVet = (Simbolo) elVet.next();
+            System.out.println( "Elemento Registros: "+this.nome+" | "+eleVet.getNome() +"    -   "+eleVet.getCategoria()+"    -    "+eleVet.getTipo()+"    -    "+this.valor  );
+        }
+    }
+
+    public ArrayList<Simbolo> getElementosRegistros() {
+        return elementosRegistros;
+    }
+
+    public void setElementosRegistros(ArrayList<Simbolo> elementosRegistros) {
+        this.elementosRegistros = elementosRegistros;
+    }
+    
 }
