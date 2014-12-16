@@ -841,7 +841,7 @@ public class Semantico implements Constants
     private void metodo134(Token token) throws SemanticError {
         if( !this.TipoExpr.equals(this.TipoLadoEsq) )
         {
-            if( ( this.TipoExpr.equals("real") || this.TipoExpr.equals("inteiro")) && ( this.TipoLadoEsq.equals("real") || this.TipoLadoEsq.equals("inteiro")))
+            if(   this.TipoExpr.equals("inteiro") &&  this.TipoLadoEsq.equals("real") )
             {
                System.out.println("tipo exp: "+this.TipoExpr);
                System.out.println("tipo lado esq: "+this.TipoLadoEsq);
@@ -849,7 +849,7 @@ public class Semantico implements Constants
             }
             else
             {
-                 if( ( this.TipoExpr.equals("cadeia") || this.TipoExpr.equals("caracter")) && ( this.TipoLadoEsq.equals("cadeia") || this.TipoLadoEsq.equals("caracter")))
+                 if(  this.TipoExpr.equals("caracter") && this.TipoLadoEsq.equals("cadeia") )
                 {
                    System.out.println("tipo exp: "+this.TipoExpr);
                    System.out.println("tipo lado esq: "+this.TipoLadoEsq);
@@ -966,16 +966,53 @@ public class Semantico implements Constants
     }
 
     private void metodo141(Token token) throws SemanticError {
-        Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
-        if( !s.getCategoria().equals("ID-CAMPO-DE-REGISTRO"))
+//       
+        System.out.println(this.regAtual);
+        this.ts.debugTabela();
+        Simbolo s = this.ts.pegaSimboloDaTSpelaPosicao(this.regAtual);
+        if( s == null )
         {
-            throw new SemanticError("esperava-se um campo de registro",token.getPosition());
+            throw new SemanticError("Registro inválido", token.getPosition());
         }
+        //Iterando sobre a lista de elementos do registro
+        ArrayList<Simbolo> listadosRegAtual = new ArrayList<>();
+        listadosRegAtual = s.getElementosRegistros();
+        s.dedugRegistros();
+        Iterator<Simbolo> it = listadosRegAtual.iterator();
+        
+        String tipoDoId = "";
+        boolean encontraCampo = false;
+        while( it.hasNext() )
+        {
+            Simbolo next = it.next();
+            next.debugSimbolo();
+            if( next.getNome().equals(token.getLexeme()))
+            {
+                
+                System.out.println("0 "+next.getCategoria());
+                if( !next.getCategoria().equals("ID-CAMPO-DE-REGISTRO"))
+                {
+                    throw new SemanticError("esperava-se um campo de registro",token.getPosition());
+                }
+                tipoDoId = next.getTipo();
+                encontraCampo = true;
+            }
+            
+        }
+        if( encontraCampo )
+        {
+            this.TipoLadoEsq = tipoDoId;
+        }
+        else
+        {
+            throw new SemanticError("id não é campo de registro atual", token.getPosition());
+        }
+        
         System.out.println("regAtual: "+this.regAtual);
         // verifica se token faz parte de registro
-        this.TipoLadoEsq = s.getTipo();
-        System.out.println(""+this.CategoriaAtual);
-        System.out.println(""+token.getLexeme());
+        
+        System.out.println("tipo do campo registro"+tipoDoId);
+        System.out.println("tokem "+token.getLexeme());
     }
 
     private void metodo142(Token token) throws SemanticError {
