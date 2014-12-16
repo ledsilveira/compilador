@@ -403,6 +403,7 @@ public class Semantico implements Constants
             this.deslocamentoVar++;
             s.setDeslocamento(this.deslocamentoVar);
             s.setTipoElementosVetor(this.TipoElementos);
+            s.setTipoIndiceVetor(this.TipoLimiteSuperior);
             //inserir os elementos do vetor
             if( this.TipoAtual.equals("vetor") )
             {
@@ -698,6 +699,7 @@ public class Semantico implements Constants
             }
             this.TipoLimiteSuperior = this.TipoConst;
             this.ValorLimiteSuperior = token.getLexeme();
+            
         }
     }
 
@@ -898,10 +900,22 @@ public class Semantico implements Constants
         }
         else
         {
-            System.out.println("atual "+this.TipoAtual);
-            System.out.println(""+token.getLexeme());
-            System.out.println("posid"+this.POSID);
+            //PEGAR O SIMBOLO E COMPARAR SE TIPOEXP = TIPO DE POSID
             Simbolo s = this.ts.pegaSimboloDaTSpelaPosicao(this.POSID);
+            String tipoIndiceVetor = s.getTipoIndiceVetor();
+            if( !tipoIndiceVetor.equals(this.TipoExpr) )
+            {
+                throw new SemanticError("Tipo de índice inválido", token.getPosition());
+            }
+            else
+            {
+                this.TipoLadoEsq = s.getTipoElementosVetor();
+            }
+            System.out.println("tip lado esquerdi "+this.TipoLadoEsq);
+            System.out.println(""+token.getLexeme());
+            System.out.println(""+this.TipoExpr );
+            System.out.println("posid "+this.POSID);
+           
             System.out.println(""+s.getTipo());
                 /**
                  * @todo implementar esta parte 136
