@@ -876,14 +876,26 @@ public class Semantico implements Constants
          */
     }
 
-    private void metodo135(Token token) {
-        System.out.println("IMPLEMENTAR 135 tipoAtual "+this.TipoAtual);
-        System.out.println(" categoria de ID "+this.CategoriaAtual);
-        System.out.println(" posId "+this.POSID);
+    private void metodo135(Token token) throws SemanticError {
+        
         Simbolo s= this.ts.pegaSimboloDaTSpelaPosicao(this.POSID);
+        if( !s.getCategoria().equals("ID-VARIAVEL") )
+        {
+            throw new SemanticError("esperava-se uma variável", token.getPosition());
+        }
+        else
+        {
+            if( !s.getTipo().equals("vetor") && !s.getTipo().equals("cadeia"))
+            {
+                throw new SemanticError("apenas vetores e cadeias podem ser indexadas", token.getPosition());
+            }
+            else
+            {
+                this.TipoVarIndexada = s.getTipo();
+            }
+        }
         System.out.println("Simbolo em POSID "+s.getNome()+" tipo "+s.getTipo()+" categoria "+s.getCategoria());
-        //if( this.TipoAtual.equals())
-        s.debugSimbolo();
+        
     }
 
     private void metodo136(Token token) throws SemanticError {
@@ -909,6 +921,24 @@ public class Semantico implements Constants
             }
             else
             {
+                //verifica se é indice do vetor
+//                String tipoIndVet = s.getTipoIndiceVetor();
+//                
+//                if( tipoIndVet.equalsIgnoreCase("inteiro"))
+//                {
+//                    if( ( Integer.parseInt(token.getLexeme()) >= Integer.parseInt( s.getValorLimiteInferior() ) )
+//                       && ( Integer.parseInt(token.getLexeme()) <= Integer.parseInt( s.getValorLimiteSuperior() ) ) )
+//                    {
+//                        
+//                    }
+//                    else{
+//                        throw new SemanticError("Não esta na faixa de indices do vetor", token.getPosition());
+//                    }
+//                }
+//                if( tipoIndVet.equalsIgnoreCase("caracter"))
+//                {
+//                    
+//                }
                 this.TipoLadoEsq = s.getTipoElementosVetor();
             }
             System.out.println("tip lado esquerdi "+this.TipoLadoEsq);
@@ -1139,23 +1169,63 @@ public class Semantico implements Constants
     }
 
     private void metodo153(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+       
     }
 
-    private void metodo154(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+    private void metodo154(Token token) throws SemanticError {
+        String tipo = this.TipoTermo;
+        /**
+         * Verifica se compatibilidade dos dois lados ou não??
+         */
+        System.out.println("Verifica se compatibilidade dos dois lados ou não??");
+        if( !this.TipoTermo.equals(this.TipoExpSimples) )
+        {
+            if( (  this.TipoTermo.equals("inteiro") &&  this.TipoExpSimples.equals("real") ) ||
+                    ( this.TipoTermo.equals("real") &&  this.TipoExpSimples.equals("inteiro") ) 
+               )
+            {
+               tipo = "real";
+               System.out.println("tipo real compativel com tipo inteiro ");
+            }
+            else
+            {
+                 if( (  this.TipoTermo.equals("caracter") && this.TipoExpSimples.equals("cadeia") ) ||
+                     (  this.TipoTermo.equals("cadeia") && this.TipoExpSimples.equals("caracter") )
+                    )
+                {
+                    tipo = "cadeia";
+                   System.out.println("tipo cadeia compativel com caracter ");
+                }
+                else
+                {
+                    System.out.println("tipo exp: "+this.TipoExpr);
+                    System.out.println("tipo lado esq: "+this.TipoLadoEsq);
+                    throw new SemanticError("Operadores incompatives", token.getPosition());
+                }
+            }
+        }
+        this.TipoExpSimples = tipo;
+        /**
+         * @todo: geração de código
+         */
     }
 
     private void metodo155(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+       /**
+        * @todo: guarda operador para futura geração de código
+        */
     }
 
     private void metodo156(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        /**
+        * @todo: guarda operador para futura geração de código
+        */
     }
 
     private void metodo157(Token token) {
-        //To change body of generated methods, choose Tools | Templates.
+        /**
+        * @todo: guarda operador para futura geração de código
+        */
     }
 
     private void metodo158(Token token) {
@@ -1294,7 +1364,21 @@ public class Semantico implements Constants
     }
 
     private void metodo173(Token token) throws SemanticError {
-          Simbolo s = this.ts.retornaSimboloPeloID(token.getLexeme());
+        Simbolo regAct = this.ts.pegaSimboloDaTSpelaPosicao(this.regAtual);
+        if( regAct == null )
+        {
+            throw new SemanticError("não existe registro", token.getPosition());
+        }
+        if( !regAct.getTipo().equals("registro"))
+        {
+            throw new SemanticError("Não é registro", token.getPosition());
+        }
+        ArrayList<Simbolo> elementosReg = regAct.getElementosRegistros();
+       Simbolo s = this.ts.retornaRegistroPeloID( elementosReg, token.getLexeme() );
+        if( s == null)
+        {
+            throw new SemanticError("id não é campo de reg. Atual", token.getPosition());
+        }
           if( !s.getCategoria().equals("ID-CAMPO-DE-REGISTRO"))
           {
               throw new SemanticError("esperava-se um campo de registro", token.getPosition());
@@ -1302,11 +1386,13 @@ public class Semantico implements Constants
           else
           {
               System.out.println(""+s.getTipo()+" "+s.getNome());
-              this.TipoVar = "inteiro";
+              this.TipoVar = s.getTipo();
               //se id é campo do regAtual
               //então TipoVar := Tipo do id
               //senao ERRO (“id não é campo do reg. atual”)
           }
+          
+          
           if( this.Le_VAR)
           {
               if( this.TipoVar.equals("booleano"))

@@ -155,4 +155,18 @@ public class TabelaDeSimbolos {
     public void deleteSimboloPelaPosicao(int indiceApag) {
         this.tabelaSimbolos.remove(indiceApag);
     }
+    public Simbolo retornaRegistroPeloID(ArrayList<Simbolo> elementosReg, String nome) {
+        //verificar se este símbolo já foi declarado no nível atual
+        
+        Iterator<Simbolo> it = elementosReg.iterator();
+        while( it.hasNext() )
+        {
+            Simbolo next = it.next(); 
+            if( next.getNome().equalsIgnoreCase( nome )  )
+            {
+                return next;
+            }
+        }
+        return null;
+    }
 }
