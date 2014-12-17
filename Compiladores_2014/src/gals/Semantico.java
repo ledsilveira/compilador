@@ -1337,9 +1337,20 @@ public class Semantico implements Constants
         }
         else
         {
-            System.out.println("IMPLEMENTAR 172"+ token.getLexeme());
+            Simbolo actEle = this.ts.pegaSimboloDaTSpelaPosicao(this.POSID );
+            System.out.println("tipo de var array "+actEle.getTipoIndiceVetor());
+            System.out.println("Erro em Array de Array IMPLEMENTAR 172"+ token.getLexeme());
             System.out.println(this.POSID);
-            this.TipoVar = "inteiro";
+            
+            if( !this.TipoExpr.equals(actEle.getTipoIndiceVetor()) )
+            {
+                throw new SemanticError("tipo do índice inválido", token.getPosition());
+            }
+            else
+            {
+                this.TipoVar = actEle.getTipoElementosVetor();
+            }
+            
             /*
             se TipoExpr <> tipo do índice do vetor
             então ERRO(“Tipo índice inválido”)
