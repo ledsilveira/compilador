@@ -1,4 +1,4 @@
-compilador
+compilador 
 ==========
 
-trabalho compilador
+Trabalho de compiladores UFSC - Professor Olinto Furtado
